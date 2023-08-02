@@ -9,9 +9,9 @@ namespace SpecFlowProjectWithPlaywright.StepDefinitions
     [Binding]
     public sealed class Hooks
     {
-     
+
         private readonly ScenarioContext _scenarioContext;
-        public Hooks( ScenarioContext scenarioContext) => _scenarioContext = scenarioContext;
+        public Hooks(ScenarioContext scenarioContext) => _scenarioContext = scenarioContext;
 
         [BeforeScenario("web")]
         public async Task BeforeScenarioWithTag()
@@ -30,7 +30,7 @@ namespace SpecFlowProjectWithPlaywright.StepDefinitions
             });
 
             //browser context will record video
-             IBrowserContext? browserContext = await browser.NewContextAsync(new()
+            IBrowserContext? browserContext = await browser.NewContextAsync(new()
             {
                 RecordVideoDir = videoRecordingtFullPath,
                 RecordVideoSize = new RecordVideoSize() { Width = 1920, Height = 1080 }
@@ -56,23 +56,40 @@ namespace SpecFlowProjectWithPlaywright.StepDefinitions
         {
             // Take a screenshot and save it in the test output folder
             string? screenshotPath = Path.Combine(Environment.CurrentDirectory, $"./TestOutPut/screenshots/{_scenarioContext.ScenarioInfo.Title}");
-            Directory.CreateDirectory(screenshotPath);
+            CreateDirectory(screenshotPath);
             var screenshotFileName = $"{_scenarioContext.ScenarioInfo.Title}_{DateTime.Now:yyyyMMdd_HHmmss}.png";
             var screenshotFullPath = Path.Combine(screenshotPath, screenshotFileName);
             IBrowserContext browserContext = _scenarioContext.ScenarioContainer.Resolve<IBrowserContext>();
+
+            var tracingPath = Path.Combine(Environment.CurrentDirectory, $"./TestOutPut/Trace/{_scenarioContext.ScenarioInfo.Title}/");
             await browserContext.Tracing.StopAsync(new()
             {
-                Path = Path.Combine(Environment.CurrentDirectory, $"./TestOutPut/Trace/trace_{DateTime.Now:yyyyMMdd_HHmmss}.zip")
+                Path = Path.Combine(tracingPath + $"{DateTime.Now:yyyyMMdd_HHmmss}.zip")
             });
             IPage page = _scenarioContext.ScenarioContainer.Resolve<IPage>();
             await page.ScreenshotAsync(new PageScreenshotOptions { Path = screenshotFullPath });
-            page.Video?.SaveAsAsync(Path.Combine(Environment.CurrentDirectory,
-                    $"./TestOutPut/VideoRecording/video_{DateTime.Now:yyyyMMdd_HHmmss}.mp4"));
-           
+
+            var VideoRecordingpath = Path.Combine(Environment.CurrentDirectory, $"./TestOutPut/VideoRecording/{_scenarioContext.ScenarioInfo.Title}");
+            CreateDirectory(VideoRecordingpath);
+
+            page.Video?.SaveAsAsync(VideoRecordingpath);
+
             await page.CloseAsync();
             await browserContext.CloseAsync();
             var browser = _scenarioContext.ScenarioContainer.Resolve<IBrowser>();
             await browser.CloseAsync();
+        }
+
+        public string CreateDirectory(string path)
+        {
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+                Console.WriteLine("Created new Directory:", path);
+            }
+            else
+                Console.WriteLine("File {0} already Existing:", path);
+            return path;
         }
     }
 }

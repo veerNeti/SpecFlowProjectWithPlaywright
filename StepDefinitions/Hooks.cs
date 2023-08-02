@@ -70,7 +70,7 @@ namespace SpecFlowProjectWithPlaywright.StepDefinitions
             });
                page.Video.SaveAsAsync(Path.Combine(Environment.CurrentDirectory,
                     $"./TestOutPut/VideoRecording/video.mp4"));
-            }
+        
             await page.CloseAsync();
             await browserContext.CloseAsync();
             var browser = _scenarioContext.ScenarioContainer.Resolve<IBrowser>();

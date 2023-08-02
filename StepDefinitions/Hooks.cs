@@ -59,18 +59,16 @@ namespace SpecFlowProjectWithPlaywright.StepDefinitions
             Directory.CreateDirectory(screenshotPath);
             var screenshotFileName = $"{_scenarioContext.ScenarioInfo.Title}_{DateTime.Now:yyyyMMdd_HHmmss}.png";
             var screenshotFullPath = Path.Combine(screenshotPath, screenshotFileName);
-            IPage page = _scenarioContext.ScenarioContainer.Resolve<IPage>();
-            await page.ScreenshotAsync(new PageScreenshotOptions { Path = screenshotFullPath });
-
-
             IBrowserContext browserContext = _scenarioContext.ScenarioContainer.Resolve<IBrowserContext>();
             await browserContext.Tracing.StopAsync(new()
             {
                 Path = Path.Combine(Environment.CurrentDirectory, $"./TestOutPut/Trace/")
             });
-               page.Video.SaveAsAsync(Path.Combine(Environment.CurrentDirectory,
+            IPage page = _scenarioContext.ScenarioContainer.Resolve<IPage>();
+            await page.ScreenshotAsync(new PageScreenshotOptions { Path = screenshotFullPath });
+            page.Video?.SaveAsAsync(Path.Combine(Environment.CurrentDirectory,
                     $"./TestOutPut/VideoRecording/video.mp4"));
-            }
+           
             await page.CloseAsync();
             await browserContext.CloseAsync();
             var browser = _scenarioContext.ScenarioContainer.Resolve<IBrowser>();

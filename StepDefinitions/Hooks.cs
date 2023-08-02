@@ -68,25 +68,13 @@ namespace SpecFlowProjectWithPlaywright.StepDefinitions
             {
                 Path = Path.Combine(Environment.CurrentDirectory, $"./TestOutPut/Trace/")
             });
-            try
-            {
-#pragma warning disable CS8602
-                await page.Video?.SaveAsAsync(Path.Combine(Environment.CurrentDirectory,
+               page.Video.SaveAsAsync(Path.Combine(Environment.CurrentDirectory,
                     $"./TestOutPut/VideoRecording/video.mp4"));
-#pragma warning restore CS8602
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            
-
             await page.CloseAsync();
             await browserContext.CloseAsync();
             var browser = _scenarioContext.ScenarioContainer.Resolve<IBrowser>();
             await browser.CloseAsync();
         }
-
-
     }
 }

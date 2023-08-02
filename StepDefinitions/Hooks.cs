@@ -62,12 +62,12 @@ namespace SpecFlowProjectWithPlaywright.StepDefinitions
             IBrowserContext browserContext = _scenarioContext.ScenarioContainer.Resolve<IBrowserContext>();
             await browserContext.Tracing.StopAsync(new()
             {
-                Path = Path.Combine(Environment.CurrentDirectory, $"./TestOutPut/Trace/")
+                Path = Path.Combine(Environment.CurrentDirectory, $"./TestOutPut/Trace/trace_{DateTime.Now:yyyyMMdd_HHmmss}.zip")
             });
             IPage page = _scenarioContext.ScenarioContainer.Resolve<IPage>();
             await page.ScreenshotAsync(new PageScreenshotOptions { Path = screenshotFullPath });
             page.Video?.SaveAsAsync(Path.Combine(Environment.CurrentDirectory,
-                    $"./TestOutPut/VideoRecording/video.mp4"));
+                    $"./TestOutPut/VideoRecording/video_{DateTime.Now:yyyyMMdd_HHmmss}.mp4"));
            
             await page.CloseAsync();
             await browserContext.CloseAsync();
